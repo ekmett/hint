@@ -53,7 +53,7 @@ make otherwise ordinary code wrong.
 
 ## The catalog
 
-The declarations and their documentation live together in [hint.h](include/hint.h).
+See the [attribute reference](https://ekmett.github.io/hint/hint_8h.html) for declarations and documentation.
 
 | Purpose | Annotations |
 | --- | --- |
