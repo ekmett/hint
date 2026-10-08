@@ -37,13 +37,28 @@ endif()
 
 option(HINT_BUILD_DOCS "Build the attribute reference with Doxygen" OFF)
 if(HINT_BUILD_DOCS)
-  find_package(Doxygen 1.9 REQUIRED)
+  find_package(Doxygen 1.18 REQUIRED)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  find_program(PANDOC_EXECUTABLE pandoc REQUIRED)
   set(DOXYGEN_PROJECT_NAME Hint)
   set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/docs")
   set(DOXYGEN_GENERATE_LATEX NO)
   set(DOXYGEN_USE_MDFILE_AS_MAINPAGE README.md)
+  set(DOXYGEN_GENERATE_TREEVIEW YES)
+  set(DOXYGEN_HTML_DYNAMIC_MENUS NO)
+  set(DOXYGEN_HTML_COLORSTYLE AUTO_LIGHT)
+  set(DOXYGEN_MARKDOWN_ID_STYLE GITHUB)
   set(DOXYGEN_QUIET YES)
   set(DOXYGEN_WARN_AS_ERROR YES)
   set(DOXYGEN_PREDEFINED "__cplusplus=201703L")
   doxygen_add_docs(hint_docs include/hint.h README.md LICENSE.md ALL)
+  add_custom_target(hint_docs_clean
+    COMMAND "${CMAKE_COMMAND}" -E rm -rf "${CMAKE_CURRENT_BINARY_DIR}/docs/html"
+    VERBATIM)
+  add_dependencies(hint_docs hint_docs_clean)
+  add_custom_command(TARGET hint_docs POST_BUILD
+    COMMAND "${Python3_EXECUTABLE}" -B "${CMAKE_CURRENT_SOURCE_DIR}/docs/site/build.py"
+      "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/docs/html"
+      "${CMAKE_CURRENT_BINARY_DIR}/site" --name hint --pandoc "${PANDOC_EXECUTABLE}"
+    VERBATIM)
 endif()
