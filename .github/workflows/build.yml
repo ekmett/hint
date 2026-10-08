@@ -1,0 +1,39 @@
+name: hint
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: hint-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install documentation tools
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends doxygen
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER=clang++ -DHINT_BUILD_TESTS=ON -DHINT_BUILD_DOCS=ON
+      - name: Build and test
+        run: |
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure
+      - name: Check relocated installed consumer
+        run: |
+          cmake --install build --prefix "$PWD/build/install"
+          mv build/install build/relocated
+          cmake -S tests -B build/consumer -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_PREFIX_PATH="$PWD/build/relocated"
+          cmake --build build/consumer --parallel
+          ctest --test-dir build/consumer --output-on-failure
+      - name: Upload API documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: hint-docs
+          path: build/docs/html
+          if-no-files-found: error
+          retention-days: 7

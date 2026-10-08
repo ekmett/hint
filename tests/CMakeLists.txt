@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: BSD-2-Clause OR Apache-2.0
+cmake_minimum_required(VERSION 3.23)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  project(hint_consumer LANGUAGES CXX)
+  find_package(hint CONFIG REQUIRED)
+  enable_testing()
+endif()
+add_executable(hint_smoke smoke.cc)
+target_link_libraries(hint_smoke PRIVATE hint::hint)
+target_compile_features(hint_smoke PRIVATE cxx_std_17)
+add_test(NAME hint.smoke COMMAND hint_smoke)
