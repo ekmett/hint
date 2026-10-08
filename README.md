@@ -92,7 +92,8 @@ ctest --test-dir build --output-on-failure
 ```
 
 Documentation requires Doxygen 1.9 or newer. Open `build/docs/html/index.html`.
-CI builds the API documentation and uploads the HTML as the `hint-docs` artifact.
+CI builds the API documentation and publishes [the reference](https://ekmett.github.io/hint/)
+to GitHub Pages on pushes to `main`.
 It also compiles a consumer against a relocated installation.
 
 Hint's catalog originated in [Native](https://github.com/ekmett/native).

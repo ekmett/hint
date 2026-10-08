@@ -31,9 +31,21 @@ jobs:
           cmake --build build/consumer --parallel
           ctest --test-dir build/consumer --output-on-failure
       - name: Upload API documentation
-        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: hint-docs
           path: build/docs/html
-          if-no-files-found: error
-          retention-days: 7
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: check
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy API documentation
+        id: deployment
+        uses: actions/deploy-pages@v4
