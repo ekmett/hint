@@ -1,6 +1,6 @@
 # hint
 
-[![docs: doxygen](https://img.shields.io/badge/docs-doxygen-blue?style=flat)](https://ekmett.github.io/hint/)
+[![docs: doxygen](https://img.shields.io/badge/docs-doxygen-blue?style=flat&logo=doxygen&logoColor=white)](https://ekmett.github.io/hint/)
 
 Compiler annotations without a dependency on somebody else's library.
 
